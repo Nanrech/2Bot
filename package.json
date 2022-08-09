@@ -1,0 +1,11 @@
+{
+  "name": "seriousbot",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Nan#5809 & sirLunar#4378",
+  "license": "ISC"
+}
