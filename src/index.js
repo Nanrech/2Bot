@@ -1,10 +1,13 @@
+// Lib imports;
 const fs = require('node:fs');
 const path = require('node:path');
 
-const { Client, GatewayIntentBits, Collection } = require('discord.js');
+// Specific imports;
+const { Client, GatewayIntentBits, Collection, Partials } = require('discord.js');
 const { token } = require('./config.json');
-const client = new Client({ intents: [GatewayIntentBits.Guilds] });
 
+// Constant declaration;
+const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers, GatewayIntentBits.GuildMessages], partials: [Partials.Channel, Partials.Message, Partials.Reaction] });
 client.commands = new Collection();
 const commandsPath = path.join(__dirname, 'commands');
 const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('.js'));
@@ -15,6 +18,7 @@ for (const file of commandFiles) {
 	client.commands.set(command.data.name, command);
 }
 
+// Interaction Handler, READY listener & login;
 client.on('interactionCreate', async interaction => {
 	if (!interaction.isChatInputCommand()) return;
 
@@ -27,11 +31,11 @@ client.on('interactionCreate', async interaction => {
 	}
 	catch (error) {
 		console.error(error);
-		await interaction.reply({ content: `Could not respond to interaction \`${interaction.name}\``, ephemeral: true });
+		await interaction.reply({ content: `Could not respond to interaction \`${interaction}\``, ephemeral: true });
 	}
 });
 
-client.once('ready', () => {
+client.on('ready', async () => {
 	console.log('Bot online');
 });
 
