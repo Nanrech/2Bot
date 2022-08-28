@@ -4,7 +4,7 @@ const functions = require('../functions.js');
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('ping')
-		.setDescription('Replies with Pong!'),
+		.setDescription('pong?'),
 	async execute(interaction, client) {
 		const sent = await interaction.reply({ content: '〽️ Pinging', fetchReply: true });
 		const pingEmbed = new EmbedBuilder()
