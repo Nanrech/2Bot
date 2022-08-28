@@ -1,3 +1,5 @@
+// Full credit to Hoss for this bit of code. None of this belongs to me (Nan).
+
 module.exports = {
 	convertMs: function(s) {
 		const ms = s % 1000;
