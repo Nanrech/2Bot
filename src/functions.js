@@ -32,7 +32,6 @@ const convertMs = (s) => {
 	}
 };
 const getReqXP = (l) => {
-	if (l == 0) {return 0;}
 	return (150 * (Math.pow(l, 2) + l));
 };
 
