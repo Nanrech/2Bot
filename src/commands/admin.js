@@ -55,9 +55,6 @@ module.exports = {
 	async execute(interaction) {
 		if (interaction.options.getSubcommand() != 'mass-xp') {interaction.reply(`Command ran: \`${interaction.options.getSubcommand()}\` (this does literally nothing atm)`);}
 		if (interaction.user.id != '452954731162238987') {interaction.reply('No, shut up');}
-		// console.log(interaction.client.guilds.cache.get('707341019275853847').members.cache);
-		// interaction.guild.roles.fetch('415665311828803584').members.map(m => m.user.tag);
-		// interaction.guild.members.fetch();
 		let allMembers;
 		interaction.guild.members.fetch()
 			.then(value => {
