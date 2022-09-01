@@ -34,6 +34,11 @@ const convertMs = (s) => {
 const getReqXP = (l) => {
 	return (150 * (Math.pow(l, 2) + l));
 };
+const getLevel = (xp) => {
+	if (xp < 300) {return 0;}
+	return Math.floor((-1 + Math.sqrt((xp / 37.5) + 1)) / 2) + 1;
+};
 
 module.exports.convertMs = convertMs;
 module.exports.getReqXP = getReqXP;
+module.exports.getLevel = getLevel;
