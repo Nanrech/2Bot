@@ -1,6 +1,6 @@
 const { SlashCommandBuilder } = require('discord.js');
 const { addXP, setLevel } = require('../events/messageCreate');
-const { getReqXP } = require('../functions');
+const { getLevel } = require('../functions');
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -75,17 +75,23 @@ module.exports = {
 				.setDescription('Runs through ALL members & assigns XP based on their roles. Handle with care!')),
 	async execute(interaction) {
 		if (interaction.user.id != '452954731162238987') {interaction.reply('No, shut up');}
-		if (interaction.options.getSubcommand() == 'add-xp' || interaction.options.getSubcommand() == 'remove-xp') {
+		if (interaction.options.getSubcommand() == 'xp-add' || interaction.options.getSubcommand() == 'xp-remove') {
 			const victim = interaction.options.getUser('victim');
 			const quantity = interaction.options.getInteger('quantity');
-			const negCheck = interaction.options.getSubcommand() == 'remove-xp' ? -1 : 1;
-			const action = negCheck == -1 ? `Removed ${quantity} from ` : `Added ${quantity} to `;
+			const negCheck = interaction.options.getSubcommand() == 'xp-remove' ? -1 : 1;
+			const action = negCheck == -1 ? `Removed ${quantity} xp from` : `Added ${quantity} xp to`;
 			addXP(victim.id, quantity * negCheck).then(final => {
-				interaction.reply(`${action} ${victim.username}. Current XP: ${final.xp}`);
-				if (final.xp > getReqXP(final.level) || final.xp < getReqXP(final.level - 1)) {
-					setLevel(victim.id);
+				const updatedXP = final.xp;
+				const calculatedLevel = getLevel(updatedXP);
+				let level = final.level;
+				if (calculatedLevel != level) {
+					setLevel(victim.id, calculatedLevel);
+					level = calculatedLevel;
 				}
-			});
+				interaction.reply(`${action} ${victim.username}. Current XP & level: ${updatedXP} xp | ${level}`);
+			},
+			);
+
 		}
 	},
 };
