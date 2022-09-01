@@ -59,11 +59,11 @@ module.exports = {
 		.addSubcommand(subcommand =>
 			subcommand
 				.setName('base-xp')
-				.setDescription('Sets the base XP value')
+				.setDescription('Sets the base XP value gain')
 				.addIntegerOption(option =>
 					option
 						.setName('bexp-value')
-						.setDescription('Base XP value')
+						.setDescription('Base XP value gain')
 						.setRequired(true)))
 		.addSubcommand(subcommand =>
 			subcommand
