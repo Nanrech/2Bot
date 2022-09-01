@@ -78,7 +78,7 @@ module.exports = {
 			const lvlEmbed = new EmbedBuilder()
 				.setColor(0xED4245)
 				.setTitle(`${member.username}'s profile`)
-				.setDescription(`Current level: ${final.level}\nCurrent XP: ${final.xp} xp\nXP to next level: ${getReqXP(final.level + 1) - final.xp} xp`);
+				.setDescription(`Current level: ${final.level}\nCurrent XP: ${final.xp} xp\nXP to next level: ${getReqXP(final.level) - final.xp} xp`);
 			interaction.reply({ embeds: [lvlEmbed] });
 		},
 		);
