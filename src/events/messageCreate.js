@@ -1,6 +1,7 @@
 const mongo = require('../mongo');
 const memberSchema = require('../schemas/member-schema');
 const { baseXP, multiplier } = require('../config-xp.json');
+const { getReqXP } = require('../functions');
 const msgTDManager = new Map();
 
 let msgCounter = 0;
@@ -14,19 +15,27 @@ module.exports = {
 		if (msg.author.bot) {
 			return;
 		}
-		if (msg.author.id != '452954731162238987') {
-			return;
+
+		if (msg.channel.id == '825071517733748786') {
+			msg.react('✅');
+			msg.react('❎');
 		}
 		if (msgTDManager.has(msg.author.id)) {
 			const data = msgTDManager.get(msg.author.id);
-			const diff = msg.createdTimestamp - data.lastmsg.createdTimestamp;
+			const diff = msg.createdTimestamp - data.lastmsgTimestamp;
 			if (diff >= 5000) {
 				msgCounter++;
-				const xp = Math.round((baseXP + Math.random() * baseXP) + baseXP * multiplier - baseXP);
-				data.lastmsg = msg;
+				data.lastmsgTimestamp = msg.createdTimestamp;
 				msgTDManager.set(msg.author.id, data);
-				// addXP(msg.author.id, xp);
-				console.log(`Gave ${xp} XP to ${msg.author.username}`);
+				const xp = Math.round((baseXP + Math.random() * baseXP) + baseXP * multiplier - baseXP);
+				addXP(msg.author.id, xp).then(final => {
+					console.log(`Gave ${xp} XP to ${msg.author.username}. Current XP: ${final.xp}`);
+					if (final.xp >= getReqXP(final.level)) {
+						setLevel(msg.author.id, final.level + 1);
+						console.log(`${msg.author.username} level up ${final.level} --> ${final.level + 1}`);
+						msg.react('🎉');
+					}
+				});
 			}
 			else {
 				return;
@@ -34,17 +43,17 @@ module.exports = {
 		}
 		else {
 			msgTDManager.set(msg.author.id, {
-				lastmsg: msg,
+				lastmsgTimestamp: msg.createdTimestamp,
 			});
 		}
 
 		// Everyone's favourite part, memory cleanup time!
-		if (msgCounter > 10) {
+		if (msgCounter > 15) {
 			console.log('Cleaning time . . .');
 			msgCounter = 0;
 			cleanUpCasualties = 0;
 			msgTDManager.forEach((value, key) => {
-				if ((msg.createdTimestamp - value.lastmsg.createdTimestamp) > 31000) {
+				if ((msg.createdTimestamp - value.lastmsgTimestamp) > 40000) {
 					cleanUpCasualties++;
 					msgTDManager.delete(key);
 				}
@@ -55,10 +64,11 @@ module.exports = {
 	},
 };
 
-const addXP = async (id, xpToAdd) => {
+async function addXP(id, xpToAdd) {
+	let final;
 	await mongo().then(async (mongoose) => {
 		try {
-			await memberSchema.findOneAndUpdate({
+			const result = await memberSchema.findOneAndUpdate({
 				id,
 			},
 			{
@@ -71,10 +81,14 @@ const addXP = async (id, xpToAdd) => {
 				upsert: true,
 				new: true,
 			});
+			final = result;
 		}
-		finally {mongoose.connection.close();}
+		finally {
+			mongoose.connection.close();
+		}
 	});
-};
+	return final;
+}
 
 const setLevel = async (id, level) => {
 	await mongo().then(async (mongoose) => {
