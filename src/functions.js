@@ -1,4 +1,4 @@
-// Full credit to Hoss for this bit of code. None of this belongs to me (Nan).
+// convertMs belongs to Hoss
 
 const convertMs = (s) => {
 	const ms = s % 1000;
