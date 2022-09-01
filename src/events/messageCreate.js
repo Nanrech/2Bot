@@ -91,9 +91,10 @@ async function addXP(id, xpToAdd) {
 }
 
 const setLevel = async (id, level) => {
+	let final;
 	await mongo().then(async (mongoose) => {
 		try {
-			await memberSchema.findOneAndUpdate({
+			const result = await memberSchema.findOneAndUpdate({
 				id,
 			},
 			{
@@ -104,9 +105,11 @@ const setLevel = async (id, level) => {
 				upsert: true,
 				new: true,
 			});
+			final = result;
 		}
 		finally {mongoose.connection.close();}
 	});
+	return final;
 };
 
 module.exports.addXP = addXP;
