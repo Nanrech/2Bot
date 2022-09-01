@@ -1,5 +1,6 @@
 const { SlashCommandBuilder } = require('discord.js');
-const { addXP } = require('../events/messageCreate');
+const { addXP, setLevel } = require('../events/messageCreate');
+const { getReqXP } = require('../functions');
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -17,11 +18,31 @@ module.exports = {
 		.addSubcommand(subcommand =>
 			subcommand
 				.setName('xp-add')
-				.setDescription('Gives xp to a member'))
+				.setDescription('Gives xp to a member')
+				.addIntegerOption(option =>
+					option
+						.setName('quantity')
+						.setDescription('XP to add')
+						.setRequired(true))
+				.addUserOption(option =>
+					option
+						.setName('victim')
+						.setDescription('The victim')
+						.setRequired(true)))
 		.addSubcommand(subcommand =>
 			subcommand
 				.setName('xp-remove')
-				.setDescription('Removes xp from a member'))
+				.setDescription('Removes xp from a member')
+				.addIntegerOption(option =>
+					option
+						.setName('quantity')
+						.setDescription('XP to remove')
+						.setRequired(true))
+				.addUserOption(option =>
+					option
+						.setName('victim')
+						.setDescription('The victim')
+						.setRequired(true)))
 		.addSubcommand(subcommand =>
 			subcommand
 				.setName('cooldown')
@@ -53,15 +74,18 @@ module.exports = {
 				.setName('mass-xp')
 				.setDescription('Runs through ALL members & assigns XP based on their roles. Handle with care!')),
 	async execute(interaction) {
-		if (interaction.options.getSubcommand() != 'mass-xp') {interaction.reply(`Command ran: \`${interaction.options.getSubcommand()}\` (this does literally nothing atm)`);}
 		if (interaction.user.id != '452954731162238987') {interaction.reply('No, shut up');}
-		let allMembers;
-		interaction.guild.members.fetch()
-			.then(value => {
-				allMembers = value;
-			})
-			.catch(error => console.error(error));
-		const t = allMembers.filter(member => member.roles.cache.has('780428613962956810'));
-		addXP;
+		if (interaction.options.getSubcommand() == 'add-xp' || interaction.options.getSubcommand() == 'remove-xp') {
+			const victim = interaction.options.getUser('victim');
+			const quantity = interaction.options.getInteger('quantity');
+			const negCheck = interaction.options.getSubcommand() == 'remove-xp' ? -1 : 1;
+			const action = negCheck == -1 ? `Removed ${quantity} from ` : `Added ${quantity} to `;
+			addXP(victim.id, quantity * negCheck).then(final => {
+				interaction.reply(`${action} ${victim.username}. Current XP: ${final.xp}`);
+				if (final.xp > getReqXP(final.level) || final.xp < getReqXP(final.level - 1)) {
+					setLevel(victim.id);
+				}
+			});
+		}
 	},
 };
