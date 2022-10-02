@@ -15,7 +15,6 @@ module.exports = {
 			'</ping:1007290802629775426>',
 			'</say:1012680708008984648>',
 			'</stab:1011610351328038972>',
-
 		];
 		const helpEmbed = new EmbedBuilder()
 			.setTitle('Help')
