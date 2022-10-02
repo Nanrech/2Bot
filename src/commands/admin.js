@@ -1,20 +1,12 @@
 const { SlashCommandBuilder } = require('discord.js');
-const { addXP, setLevel } = require('../events/messageCreate');
+const { addXP } = require('../events/messageCreate');
 const { getLevel } = require('../functions');
+const rE = require('../events/ready');
 
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('admin')
 		.setDescription('I don\'t think you can see this description :thonk:')
-		.addSubcommand(subcommand =>
-			subcommand
-				.setName('blacklist-add')
-				.setDescription('Add a channel to the blacklist'),
-		)
-		.addSubcommand(subcommand =>
-			subcommand
-				.setName('blacklist-remove')
-				.setDescription('Removes a channel from the blacklist'))
 		.addSubcommand(subcommand =>
 			subcommand
 				.setName('xp-add')
@@ -45,53 +37,73 @@ module.exports = {
 						.setRequired(true)))
 		.addSubcommand(subcommand =>
 			subcommand
-				.setName('cooldown')
-				.setDescription('Changes the current XP cooldown'))
-		.addSubcommand(subcommand =>
-			subcommand
-				.setName('mult')
-				.setDescription('Sets the random XP multiplier. 0 is NO random XP bonus and 100 means 2x XP')
-				.addIntegerOption(option =>
-					option
-						.setName('mult-value')
-						.setDescription('XP multiplier value')
-						.setRequired(true)))
-		.addSubcommand(subcommand =>
-			subcommand
-				.setName('base-xp')
-				.setDescription('Sets the base XP value gain')
-				.addIntegerOption(option =>
-					option
-						.setName('bexp-value')
-						.setDescription('Base XP value gain')
-						.setRequired(true)))
-		.addSubcommand(subcommand =>
-			subcommand
-				.setName('reaction-roles')
-				.setDescription('Sends an embed with all the reaction roles available. DO NOT USE IF YOU DON\'T KNOW WHAT YOU\'RE DOING'))
+				.setName('shutdown')
+				.setDescription('Good night'))
 		.addSubcommand(subcommand =>
 			subcommand
 				.setName('mass-xp')
 				.setDescription('Runs through ALL members & assigns XP based on their roles. Handle with care!')),
 	async execute(interaction) {
-		if (interaction.user.id != '452954731162238987') {interaction.reply('No, shut up');}
-		if (interaction.options.getSubcommand() == 'xp-add' || interaction.options.getSubcommand() == 'xp-remove') {
+		if (interaction.member.roles.cache.some(role => {String(role.id) == '709434503294091294';})) {
+			interaction.reply('No, shut up');
+			return;
+		}
+
+		else if (interaction.options.getSubcommand() == 'shutdown') {
+			interaction.reply('Shutting down');
+			console.log('[IMPORTANT] Shutting down bot');
+			await new Promise(resolve => setTimeout(resolve, 1000));
+			// fancy "wait for a second" I stole from stackoverflow
+			process.exit(0);
+		}
+
+		else if (interaction.options.getSubcommand() == 'xp-add' || interaction.options.getSubcommand() == 'xp-remove') {
 			const victim = interaction.options.getUser('victim');
 			const quantity = interaction.options.getInteger('quantity');
 			const negCheck = interaction.options.getSubcommand() == 'xp-remove' ? -1 : 1;
 			const action = negCheck == -1 ? `Removed ${quantity} xp from` : `Added ${quantity} xp to`;
+			console.log(`[ADMIN-LOG] ${negCheck * quantity} from/for ${victim.id}`);
 			addXP(victim.id, quantity * negCheck).then(final => {
 				const updatedXP = final.xp;
 				const calculatedLevel = getLevel(updatedXP);
-				let level = final.level;
-				if (calculatedLevel != level) {
-					setLevel(victim.id, calculatedLevel);
-					level = calculatedLevel;
+				if (calculatedLevel != final.level) {
+					interaction.reply(`${action} ${victim.username}. Current XP & level: ${updatedXP} xp | ${calculatedLevel}`);
 				}
-				interaction.reply(`${action} ${victim.username}. Current XP & level: ${updatedXP} xp | ${level}`);
+				interaction.reply(`${action} ${victim.username}. Current XP & level: ${updatedXP} xp | ${calculatedLevel}`);
 			},
 			);
 
 		}
+
+		else if (interaction.options.getSubcommand() == 'mass-xp') {
+			interaction.guild.members.fetch();
+			const totalVerified = interaction.guild.roles.cache.get('727884232743059486').members.map(m => m);
+			const level100 = [];
+			const level90 = [];
+			const level80 = [];
+			const level70 = [];
+			const level60 = [];
+			const level50 = [];
+			const level40 = [];
+			const level30 = [];
+			const level20 = [];
+			const level15 = [];
+			const level10 = [];
+			totalVerified.forEach(member => {
+				console.log('2');
+				if (member.roles.cache.some(role => {rE.roleEnum.levels.role100.id == role.id;})) {
+					level100.push(member);
+					totalVerified.splice(totalVerified.findIndex(member));
+				}
+				else if (member.roles.cache.some(role => {rE.roleEnum.levels.role90 == role;})) {
+					level90.push(member);
+					totalVerified.splice(totalVerified.findIndex(member));
+				}
+			});
+			console.log(level100.length);
+			console.log(level90.length);
+		}
+
+
 	},
 };
