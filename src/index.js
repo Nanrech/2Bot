@@ -7,7 +7,7 @@ const { Client, GatewayIntentBits, Collection, Partials } = require('discord.js'
 const { token } = require('./config.json');
 
 // Discord.js constant declaration boilerplate;
-const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers, GatewayIntentBits.GuildMessages], partials: [Partials.Channel, Partials.Message, Partials.Reaction] });
+const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers, GatewayIntentBits.GuildMessages, GatewayIntentBits.GuildMessageReactions], partials: [Partials.Channel, Partials.Message, Partials.Reaction] });
 const commandsPath = path.join(__dirname, 'commands');
 const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('.js'));
 const eventsPath = path.join(__dirname, 'events');
@@ -44,13 +44,8 @@ client.on('interactionCreate', async interaction => {
 	}
 	catch (error) {
 		console.error(error);
+		interaction.channel.send((`Command crashed lmao \`${interaction.commandName}\``));
 	}
-});
-
-
-// READY listener & login method;
-client.on('ready', async () => {
-	console.log('Bot online');
 });
 
 client.login(token);

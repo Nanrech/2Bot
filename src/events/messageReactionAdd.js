@@ -1,8 +1,7 @@
-const { reactRolesChannel } = require('../config.json');
-const { verifyRole, giveawaysRole, eventsRole, qotdRole, streamsRole, youtubeRole, movieNightRole, pogcastRole, fotdRole } = require('../role-cache.json');
-
+const { reactRolesChannel, verifyChannel } = require('../config.json');
+const rE = require('./ready');
 module.exports = {
-	name: 'messageReactionCreate',
+	name: 'messageReactionAdd',
 	once: false,
 	execute(reaction, user) {
 		if (user.bot) {return;}
@@ -14,38 +13,41 @@ module.exports = {
 				return;
 			}
 		}
-		if (reaction.message.id == '883353164563230731' && !user.roles.includes(verifyRole)) {
-			user.roles.add(verifyRole);
-			return;
+		if (reaction.message.channel.id == verifyChannel) {
+			reaction.message.guild.members.fetch(user.id).then(member => {
+				console.log(`[IMPORTANT] Verified ${member}`);
+				member.roles.add(rE.roleEnum.verifyRole.id);
+				return;
+			});
 		}
-
-		if (reaction.channel.id == reactRolesChannel) {
-			switch (reaction.emoji.name) {
-
-			case 'giveaway':
-				user.roles.add(giveawaysRole);
-				break;
-			case '🎮':
-				user.roles.add(eventsRole);
-				break;
-			case 'shrug':
-				user.roles.add(qotdRole);
-				break;
-			case 'Ok':
-				user.roles.add(streamsRole);
-				break;
-			case 'youtube':
-				user.roles.add(youtubeRole);
-				break;
-			case '🍿':
-				user.roles.add(movieNightRole);
-				break;
-			case 'catdance':
-				user.roles.add(pogcastRole);
-				break;
-			case 'Clap':
-				user.roles.add(fotdRole);
-				break;
-			}
+		if (reaction.message.channel.id == reactRolesChannel) {
+			reaction.message.guild.members.fetch(user.id).then(member => {
+				switch (reaction.emoji.name) {
+				case 'giveaway':
+					member.roles.add(rE.roleEnum.reactions.giveawaysRole);
+					break;
+				case '🎮':
+					member.roles.add(rE.roleEnum.reactions.eventsRole);
+					break;
+				case 'shrug':
+					member.roles.add(rE.roleEnum.reactions.qotdRole);
+					break;
+				case 'Ok':
+					member.roles.add(rE.roleEnum.reactions.streamsRole);
+					break;
+				case 'youtube':
+					member.roles.add(rE.roleEnum.reactions.youtubeRole);
+					break;
+				case '🍿':
+					user.roles.add(rE.roleEnum.reactions.movieNightRole);
+					break;
+				case 'catdance':
+					member.roles.add(rE.roleEnum.reactions.pogcastRole);
+					break;
+				case 'Clap':
+					member.roles.add(rE.roleEnum.reactions.fotdRole);
+					break;
+				}
+			});
 		}
 	} };

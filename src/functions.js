@@ -35,10 +35,48 @@ const getReqXP = (l) => {
 	return (150 * (Math.pow(l, 2) + l));
 };
 const getLevel = (xp) => {
-	if (xp < 300) {return 0;}
-	return Math.floor((-1 + Math.sqrt((xp / 37.5) + 1)) / 2) + 1;
+	const XP = Number(xp);
+	console.log(XP);
+	console.log(typeof XP);
+	if (XP < 300) {return 0;}
+	console.log('Greater than 300');
+	console.log(Math.floor((-1 + Math.sqrt((XP / 37.5) + 1)) / 2) + 1);
+	return Math.floor((-1 + Math.sqrt((XP / 37.5) + 1)) / 2) + 1;
+};
+const assignLevelRole = (l) => {
+	switch (parseInt(l)) {
+	case 1:
+		return true;
+	case 5:
+		return true;
+	case 10:
+		return true;
+	case 15:
+		return true;
+	case 20:
+		return true;
+	case 30:
+		return true;
+	case 40:
+		return true;
+	case 50:
+		return true;
+	case 60:
+		return true;
+	case 70:
+		return true;
+	case 80:
+		return true;
+	case 90:
+		return true;
+	case 100:
+		return true;
+	default:
+		return false;
+	}
 };
 
 module.exports.convertMs = convertMs;
 module.exports.getReqXP = getReqXP;
 module.exports.getLevel = getLevel;
+module.exports.assignLevelRole = assignLevelRole;
