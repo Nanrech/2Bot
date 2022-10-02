@@ -13,13 +13,12 @@ module.exports = {
 				.setDescription('The target channel. Leave blank to send it here')
 				.setRequired(false)),
 	async execute(interaction) {
-		if (interaction.user.id == '843791056252174338') {
-			interaction.reply('Shut up lunar');
-			return;
-		}
+
 		const channel_option = interaction.options.getChannel('channel');
 		const channel = channel_option == null ? interaction.channel : channel_option;
+
 		await channel.send(interaction.options.getString('text'));
 		await interaction.reply({ content: `Message sent at ${channel}`, ephemeral: true });
+		console.log(`[ADMIN-LOG] /say used by ${interaction.user.username} in ${channel}. Message: ${interaction.options.getString('text')}`);
 	},
 };
