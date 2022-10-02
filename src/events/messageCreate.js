@@ -1,7 +1,8 @@
 const mongo = require('../mongo');
 const memberSchema = require('../schemas/member-schema');
-const { baseXP, multiplier } = require('../config-xp.json');
-const { getReqXP } = require('../functions');
+const { baseXP, multiplier, blacklist } = require('../config-xp.json');
+const { assignLevelRole, getLevel } = require('../functions');
+const rE = require('./ready');
 const msgTDManager = new Map();
 
 let msgCounter = 0;
@@ -11,8 +12,7 @@ module.exports = {
 	name: 'messageCreate',
 	once: false,
 	execute(msg) {
-
-		if (msg.author.bot) {
+		if (msg.author.bot || blacklist.includes(String(msg.channel.id))) {
 			return;
 		}
 
@@ -20,22 +20,46 @@ module.exports = {
 			msg.react('✅');
 			msg.react('❎');
 		}
+
 		if (msgTDManager.has(msg.author.id)) {
+
 			const data = msgTDManager.get(msg.author.id);
 			const diff = msg.createdTimestamp - data.lastmsgTimestamp;
-			if (diff >= 5000) {
+
+			if (diff >= 1) {
 				msgCounter++;
 				data.lastmsgTimestamp = msg.createdTimestamp;
 				msgTDManager.set(msg.author.id, data);
+
+				// XP calculation algorithm;
 				const xp = Math.round((baseXP + Math.random() * baseXP) + baseXP * multiplier - baseXP);
-				addXP(msg.author.id, xp).then(final => {
-					console.log(`Gave ${xp} XP to ${msg.author.username}. Current XP: ${final.xp}`);
-					if (final.xp >= getReqXP(final.level)) {
-						setLevel(msg.author.id, final.level + 1);
-						console.log(`${msg.author.username} level up ${final.level} --> ${final.level + 1}`);
-						msg.react('🎉');
-					}
-				});
+
+				// Add XP to user. Resolve its promise and:
+				console.log(`[TRY] Attempting to give XP to ${msg.author.id}`);
+				try {
+					addXP(msg.author.id, xp).then(final => {
+
+						// Log
+						if (!final) {
+							console.log('[IMPORTANT] Connection got dropped. Re-starting mongo connection...');
+							mongo();
+							return;
+						}
+						console.log(`[SUCCESS] Succesfully gave ${xp} XP to ${msg.author.username}. Current XP: ${final.xp}`);
+
+						const newLevel = getLevel(final.xp);
+						if (newLevel != getLevel(final.xp - xp)) {
+
+							console.log(`${msg.author.username} level up ${newLevel} --> ${newLevel}`);
+							msg.react('🎉');
+
+							if (assignLevelRole(newLevel)) {
+								msg.member.roles.add((rE.roleEnum.returnLRole(newLevel)));
+							}
+						}
+					});
+				}
+				catch (error) {console.error(error);}
 			}
 			else {
 				return;
@@ -48,69 +72,49 @@ module.exports = {
 		}
 
 		// Everyone's favourite part, memory cleanup time!
-		if (msgCounter > 15) {
-			console.log('Cleaning time . . .');
+		if (msgCounter > 30) {
+			console.log('[IMPORTANT] Cleaning time . . .');
+
+			// Reset counter & initiate cleanup + logging;
 			msgCounter = 0;
 			cleanUpCasualties = 0;
+
+			// Loop through each cached value (message timestamps) & remove ones that may not be used;
 			msgTDManager.forEach((value, key) => {
-				if ((msg.createdTimestamp - value.lastmsgTimestamp) > 40000) {
+				if ((msg.createdTimestamp - value.lastmsgTimestamp) > 60000) {
 					cleanUpCasualties++;
 					msgTDManager.delete(key);
 				}
 			});
-			console.log(`. . . Cleaned up ${cleanUpCasualties} values from local memory`);
+
+			// Log
+			console.log(`[IMPORTANT] . . . Cleaned up ${cleanUpCasualties} values from local memory`);
 		}
 
 	},
 };
 
 async function addXP(id, xpToAdd) {
-	let final;
-	await mongo().then(async (mongoose) => {
-		try {
-			const result = await memberSchema.findOneAndUpdate({
-				id,
+	try {
+		const result = await memberSchema.findOneAndUpdate({
+			id,
+		},
+		{
+			id,
+			$inc: {
+				xp: xpToAdd,
 			},
-			{
-				id,
-				$inc: {
-					xp: xpToAdd,
-				},
-			},
-			{
-				upsert: true,
-				new: true,
-			});
-			final = result;
-		}
-		finally {
-			mongoose.connection.close();
-		}
-	});
-	return final;
+		},
+		{
+			upsert: true,
+			new: true,
+		});
+		return result;
+	}
+	catch (error) {
+		console.error(error);
+		mongo();
+	}
 }
 
-const setLevel = async (id, level) => {
-	let final;
-	await mongo().then(async (mongoose) => {
-		try {
-			const result = await memberSchema.findOneAndUpdate({
-				id,
-			},
-			{
-				id,
-				level: level,
-			},
-			{
-				upsert: true,
-				new: true,
-			});
-			final = result;
-		}
-		finally {mongoose.connection.close();}
-	});
-	return final;
-};
-
 module.exports.addXP = addXP;
-module.exports.setLevel = setLevel;
