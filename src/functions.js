@@ -36,11 +36,7 @@ const getReqXP = (l) => {
 };
 const getLevel = (xp) => {
 	const XP = Number(xp);
-	console.log(XP);
-	console.log(typeof XP);
 	if (XP < 300) {return 0;}
-	console.log('Greater than 300');
-	console.log(Math.floor((-1 + Math.sqrt((XP / 37.5) + 1)) / 2) + 1);
 	return Math.floor((-1 + Math.sqrt((XP / 37.5) + 1)) / 2) + 1;
 };
 const assignLevelRole = (l) => {
