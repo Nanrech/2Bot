@@ -76,7 +76,10 @@ module.exports = {
 		}
 
 		else if (interaction.options.getSubcommand() == 'mass-xp') {
+			interaction.reply('not implemented');
+			return;
 			interaction.guild.members.fetch();
+			// I am terribly sorry, I haven't been able to finish this yet...
 			const totalVerified = interaction.guild.roles.cache.get('727884232743059486').members.map(m => m);
 			const level100 = [];
 			const level90 = [];
