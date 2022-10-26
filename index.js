@@ -4,13 +4,13 @@ const path = require('node:path');
 
 // "Specific" imports;
 const { Client, GatewayIntentBits, Collection, Partials } = require('discord.js');
-const { token } = require('./config.json');
+const { token } = require('./src/config.json');
 
 // Discord.js constant declaration boilerplate;
 const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers, GatewayIntentBits.GuildMessages, GatewayIntentBits.GuildMessageReactions], partials: [Partials.Channel, Partials.Message, Partials.Reaction] });
-const commandsPath = path.join(__dirname, 'commands');
+const commandsPath = path.join(__dirname, './src/commands');
 const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('.js'));
-const eventsPath = path.join(__dirname, 'events');
+const eventsPath = path.join(__dirname, './src/events');
 const eventFiles = fs.readdirSync(eventsPath).filter(file => file.endsWith('.js'));
 client.commands = new Collection();
 
