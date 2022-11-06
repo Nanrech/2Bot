@@ -54,7 +54,12 @@ module.exports = {
 							msg.react('🎉');
 
 							if (assignLevelRole(newLevel)) {
-								msg.member.roles.add((rE.roleEnum.returnLRole(newLevel)));
+								try {
+									msg.member.roles.add(rE.roleEnum.returnLRole(newLevel).id);
+								}
+								catch (error) {
+									console.error(error);
+								}
 							}
 						}
 					});
