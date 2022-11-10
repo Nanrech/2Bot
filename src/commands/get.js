@@ -65,6 +65,9 @@ module.exports = {
 						);
 					interaction.editReply({ embeds: [topEmbed] });
 				}
+				catch (error) {
+					console.error(error);
+				}
 				finally {mongoose.connection.close();}
 			});
 			return;
