@@ -9,7 +9,7 @@ module.exports = {
 				.setDescription('The victim')
 				.setRequired(true)),
 	async execute(interaction) {
-		addXP(interaction.user.id, 50);
+		// TODO: addXP(interaction.user.id, 50);
 		let emoji = '<:wholesomekiss:733723707473788958>';
 		switch (interaction.options.getUser('user').id) {
 		case '291620843363106828':
