@@ -1,12 +1,12 @@
 {
   "name": "seriousbot",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "Nan#5809 & sirLunar#4378",
+  "author": "Nan#5809",
   "license": "ISC",
   "dependencies": {
     "@discordjs/rest": "^1.0.1",
