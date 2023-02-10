@@ -1,125 +1,112 @@
-const mongo = require('../mongo');
-const memberSchema = require('../schemas/member-schema');
-const { baseXP, multiplier, blacklist } = require('../config-xp.json');
-const { assignLevelRole, getLevel } = require('../functions');
-const rE = require('./ready');
-const msgTDManager = new Map();
+const mongoose = require('../mongo');
+const memberSchema = require('../schemas/member');
+const { CHANNELS, ROLES } = require('../enums');
 
-let msgCounter = 0;
-let cleanUpCasualties = 0;
+// { member_id: message_timestamp }
+const timeMap = new Map();
+const baseXP = 60;
+let msg_counter = 0;
+
 
 module.exports = {
 	name: 'messageCreate',
 	once: false,
-	execute(msg) {
-		if (msg.author.bot || blacklist.includes(String(msg.channel.id))) {
+	async execute(msg) {
+		if (msg.channel.id == CHANNELS.staff_suggestions) {
+			msg.react('✅');
+			msg.react('❎');
 			return;
 		}
 
-		if (msg.channel.id == '825071517733748786') {
-			msg.react('✅');
-			msg.react('❎');
-		}
-
-		if (msgTDManager.has(msg.author.id)) {
-
-			const data = msgTDManager.get(msg.author.id);
-			const diff = msg.createdTimestamp - data.lastmsgTimestamp;
-
-			if (diff >= 1) {
-				msgCounter++;
-				data.lastmsgTimestamp = msg.createdTimestamp;
-				msgTDManager.set(msg.author.id, data);
-
-				// XP calculation algorithm;
-				const xp = Math.round((baseXP + Math.random() * baseXP) + baseXP * multiplier - baseXP);
-
-				// Add XP to user. Resolve its promise and:
-				console.log(`[TRY] Attempting to give XP to ${msg.author.id}`);
-				try {
-					addXP(msg.author.id, xp).then(final => {
-
-						// Log
-						if (!final) {
-							console.log('[IMPORTANT] Connection got dropped. Re-starting mongo connection...');
-							mongo();
-							return;
-						}
-						console.log(`[SUCCESS] Succesfully gave ${xp} XP to ${msg.author.username}. Current XP: ${final.xp}`);
-
-						const newLevel = getLevel(final.xp);
-						if (newLevel != getLevel(final.xp - xp)) {
-
-							console.log(`${msg.author.username} level up ${newLevel} --> ${newLevel}`);
-							msg.react('🎉');
-
-							if (assignLevelRole(newLevel)) {
-								try {
-									msg.member.roles.add(rE.roleEnum.returnLRole(newLevel).id);
-								}
-								catch (error) {
-									console.error(error);
-								}
-							}
-						}
-					});
-				}
-				catch (error) {console.error(error);}
+		if (msg.partial) {
+			try {
+				msg.fetch();
 			}
-			else {
+			catch (error) {
 				return;
 			}
 		}
-		else {
-			msgTDManager.set(msg.author.id, {
-				lastmsgTimestamp: msg.createdTimestamp,
-			});
-		}
 
-		// Everyone's favourite part, memory cleanup time!
-		if (msgCounter > 30) {
-			console.log('[IMPORTANT] Cleaning time . . .');
+		const member_id = msg.author.id;
 
-			// Reset counter & initiate cleanup + logging;
-			msgCounter = 0;
-			cleanUpCasualties = 0;
+		if (timeMap.has(member_id)) {
+			// Small cooldown to prevent spam. __Shouldn't__ be noticeable
 
-			// Loop through each cached value (message timestamps) & remove ones that may not be used;
-			msgTDManager.forEach((value, key) => {
-				if ((msg.createdTimestamp - value.lastmsgTimestamp) > 60000) {
-					cleanUpCasualties++;
-					msgTDManager.delete(key);
+			const lastTimestamp = timeMap.get(member_id);
+			const diff = msg.createdTimestamp - lastTimestamp;
+
+			if (diff < 3000) return;
+
+			const xpToAdd = Math.round((baseXP + Math.random() * baseXP) + baseXP * 1 - baseXP);
+
+			try {
+				const updatedMember = await memberSchema.findOneAndUpdate({ id: member_id }, { $inc: { xp: xpToAdd } }, { upsert: true, new: true });
+				console.log('XP given');
+
+				const lastLevel = getLevel(updatedMember.xp - xpToAdd);
+				const newLevel = getLevel(updatedMember.xp);
+
+				if (lastLevel < newLevel) msg.react('🎉');
+
+				if (assignLevelRole(newLevel)) {
+					msg.guild.members.cache.get(member_id).roles.add(findNewLevelRole(newLevel));
 				}
-			});
-
-			// Log
-			console.log(`[IMPORTANT] . . . Cleaned up ${cleanUpCasualties} values from local memory`);
+			}
+			catch (error) {
+				console.error(error);
+				mongoose();
+			}
+		}
+		else {
+			msg_counter++;
+			timeMap.set(member_id, msg.createdTimestamp);
 		}
 
+		if (msg_counter > 299) {
+			timeMap.clear();
+			msg_counter = 0;
+		}
 	},
 };
 
-async function addXP(id, xpToAdd) {
-	try {
-		const result = await memberSchema.findOneAndUpdate({
-			id,
-		},
-		{
-			id,
-			$inc: {
-				xp: xpToAdd,
-			},
-		},
-		{
-			upsert: true,
-			new: true,
-		});
-		return result;
-	}
-	catch (error) {
-		console.error(error);
-		mongo();
-	}
+function getLevel(xp) {
+	if (xp < 300) return 0;
+	return Math.floor((-1 + Math.sqrt((xp / 37.5) + 1)) / 2) + 1;
 }
 
-module.exports.addXP = addXP;
+function assignLevelRole(level) {
+	return [1, 5, 10, 15, 20, 30, 40, 50, 60, 70, 80, 90, 100].includes(level);
+}
+
+function findNewLevelRole(level) {
+	switch (level) {
+	case 1:
+		return ROLES.level1;
+	case 5:
+		return ROLES.level5;
+	case 10:
+		return ROLES.level10;
+	case 15:
+		return ROLES.level15;
+	case 20:
+		return ROLES.level20;
+	case 30:
+		return ROLES.level30;
+	case 40:
+		return ROLES.level40;
+	case 50:
+		return ROLES.level50;
+	case 60:
+		return ROLES.level60;
+	case 70:
+		return ROLES.level70;
+	case 80:
+		return ROLES.level80;
+	case 90:
+		return ROLES.level90;
+	case 100:
+		return ROLES.level100;
+	default:
+		return ROLES.level1;
+	}
+}
