@@ -1,10 +1,10 @@
-const { reactRolesChannel, verifyChannel } = require('../config.json');
-const rE = require('./ready');
+const { ROLES, CHANNELS } = require('../enums');
+
+
 module.exports = {
 	name: 'messageReactionAdd',
 	once: false,
-	execute(reaction, user) {
-		if (user.bot) {return;}
+	async execute(reaction, user) {
 		if (reaction.partial) {
 			try {
 				reaction.fetch();
@@ -13,46 +13,43 @@ module.exports = {
 				return;
 			}
 		}
-		if (reaction.message.channel.id == verifyChannel) {
-			reaction.message.guild.members.fetch(user.id).then(member => {
-				console.log(`[IMPORTANT] Verified ${member}`);
-				member.roles.add(rE.roleEnum.verifyRole.id);
+
+		if (reaction.message.channel.id == CHANNELS.verify) {
+			await reaction.message.guild.members.cache.get(user.id).roles.add(ROLES.verified);
+			return;
+		}
+
+		else if (reaction.message.channel.id == CHANNELS.reaction_roles) {
+			switch (reaction.emoji.name) {
+			case 'giveaway':
+				await reaction.message.guild.members.cache.get(user.id).roles.add(ROLES.giveaways);
+				break;
+			case '🎮':
+				await reaction.message.guild.members.cache.get(user.id).roles.add(ROLES.events);
+				break;
+			case 'shrug':
+				await reaction.message.guild.members.cache.get(user.id).roles.add(ROLES.qotd);
+				break;
+			case 'Ok':
+				await reaction.message.guild.members.cache.get(user.id).roles.add(ROLES.streams);
+				break;
+			case 'youtube':
+				await reaction.message.guild.members.cache.get(user.id).roles.add(ROLES.youtube);
+				break;
+			case '🍿':
+				await reaction.message.guild.members.cache.get(user.id).roles.add(ROLES.movie);
+				break;
+			case 'catdance':
+				await reaction.message.guild.members.cache.get(user.id).roles.add(ROLES.podcast);
+				break;
+			case 'Clap':
+				await reaction.message.guild.members.cache.get(user.id).roles.add(ROLES.fotd);
+				break;
+
+			default:
+				console.log(`Unknown reaction ${reaction.emoji.name}`);
 				return;
-			});
-		}
-		if (reaction.message.channel.id == reactRolesChannel) {
-			try {
-				reaction.message.guild.members.fetch(user.id).then(member => {
-					switch (reaction.emoji.name) {
-					case 'giveaway':
-						member.roles.add(rE.roleEnum.reactions.giveawaysRole);
-						break;
-					case '🎮':
-						member.roles.add(rE.roleEnum.reactions.eventsRole);
-						break;
-					case 'shrug':
-						member.roles.add(rE.roleEnum.reactions.qotdRole);
-						break;
-					case 'Ok':
-						member.roles.add(rE.roleEnum.reactions.streamsRole);
-						break;
-					case 'youtube':
-						member.roles.add(rE.roleEnum.reactions.youtubeRole);
-						break;
-					case '🍿':
-						user.roles.add(rE.roleEnum.reactions.movieNightRole);
-						break;
-					case 'catdance':
-						member.roles.add(rE.roleEnum.reactions.pogcastRole);
-						break;
-					case 'Clap':
-						member.roles.add(rE.roleEnum.reactions.fotdRole);
-						break;
-					}
-				});
-			}
-			catch (error) {
-				console.log(error);
 			}
 		}
-	} };
+	},
+};

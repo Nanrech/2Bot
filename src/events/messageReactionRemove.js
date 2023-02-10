@@ -1,10 +1,11 @@
-const { reactRolesChannel } = require('../config.json');
-const rE = require('./ready');
+const { ROLES, CHANNELS } = require('../enums');
+
+
 module.exports = {
-	name: 'messageReactionAdd',
+	name: 'messageReactionRemove',
 	once: false,
-	execute(reaction, user) {
-		if (user.bot) {return;}
+	async execute(reaction, user) {
+		if (reaction.message.channel.id != CHANNELS.reaction_roles) return;
 		if (reaction.partial) {
 			try {
 				reaction.fetch();
@@ -13,42 +14,36 @@ module.exports = {
 				return;
 			}
 		}
-		if (reaction.message.channel.id == reactRolesChannel) {
-			reaction.message.guild.members.fetch(user.id).then(member => {
-				switch (reaction.emoji.name) {
-				case 'giveaway':
-					if (!member.roles.cache.some(role => role.id == rE.roleEnum.reactions.giveawaysRole.id)) {return;}
-					member.roles.remove(rE.roleEnum.reactions.giveawaysRole);
-					break;
-				case '🎮':
-					if (!member.roles.cache.some(role => role.id == rE.roleEnum.reactions.eventsRole.id)) {return;}
-					member.roles.remove(rE.roleEnum.reactions.eventsRole);
-					break;
-				case 'shrug':
-					if (!member.roles.cache.some(role => role.id == rE.roleEnum.reactions.qotdRole.id)) {return;}
-					member.roles.remove(rE.roleEnum.reactions.qotdRole);
-					break;
-				case 'Ok':
-					if (!member.roles.cache.some(role => role.id == rE.roleEnum.reactions.streamsRole.id)) {return;}
-					member.roles.remove(rE.roleEnum.reactions.streamsRole);
-					break;
-				case 'youtube':
-					if (!member.roles.cache.some(role => role.id == rE.roleEnum.reactions.youtubeRole.id)) {return;}
-					member.roles.remove(rE.roleEnum.reactions.youtubeRole);
-					break;
-				case '🍿':
-					if (!member.roles.cache.some(role => role.id == rE.roleEnum.reactions.movieNightRole.id)) {return;}
-					user.roles.remove(rE.roleEnum.reactions.movieNightRole);
-					break;
-				case 'catdance':
-					if (!member.roles.cache.some(role => role.id == rE.roleEnum.reactions.pogcastRole.id)) {return;}
-					member.roles.remove(rE.roleEnum.reactions.pogcastRole);
-					break;
-				case 'Clap':
-					if (!member.roles.cache.some(role => role.id == rE.roleEnum.reactions.pogcastRole.id)) {return;}
-					member.roles.remove(rE.roleEnum.reactions.fotdRole);
-					break;
-				}
-			});
+
+		switch (reaction.emoji.name) {
+		case 'giveaway':
+			await reaction.message.guild.members.cache.get(user.id).roles.remove(ROLES.giveaways);
+			break;
+		case '🎮':
+			await reaction.message.guild.members.cache.get(user.id).roles.remove(ROLES.events);
+			break;
+		case 'shrug':
+			await reaction.message.guild.members.cache.get(user.id).roles.remove(ROLES.qotd);
+			break;
+		case 'Ok':
+			await reaction.message.guild.members.cache.get(user.id).roles.remove(ROLES.streams);
+			break;
+		case 'youtube':
+			await reaction.message.guild.members.cache.get(user.id).roles.remove(ROLES.youtube);
+			break;
+		case '🍿':
+			await reaction.message.guild.members.cache.get(user.id).roles.remove(ROLES.movie);
+			break;
+		case 'catdance':
+			await reaction.message.guild.members.cache.get(user.id).roles.remove(ROLES.podcast);
+			break;
+		case 'Clap':
+			await reaction.message.guild.members.cache.get(user.id).roles.remove(ROLES.fotd);
+			break;
+
+		default:
+			console.log(`Unknown reaction ${reaction.emoji.name}`);
+			return;
 		}
-	} };
+	},
+};
