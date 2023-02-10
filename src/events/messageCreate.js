@@ -12,7 +12,6 @@ module.exports = {
 	name: 'messageCreate',
 	once: false,
 	async execute(msg) {
-		if (msg.channel.id != '707341019275853847') return;
 		if (msg.channel.id == CHANNELS.staff_suggestions) {
 			msg.react('✅');
 			msg.react('❎');
@@ -27,6 +26,8 @@ module.exports = {
 				return;
 			}
 		}
+
+		if (msg.guildId != '707341019275853847') return;
 
 		const member_id = msg.author.id;
 
