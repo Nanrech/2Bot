@@ -1,8 +1,9 @@
 const mongoose = require('mongoose');
-const { mongoPath } = require('./config.json');
+const { mongoURL } = require('./config.json');
 
 module.exports = async () => {
-	await mongoose.connect(mongoPath, { keepAlive: true, keepAliveInitialDelay: 5000 });
-	console.log('[IMPORTANT] Succesfully connected to MongoDB');
+	await mongoose.connect(mongoURL, { keepAlive: true });
+	mongoose.set('strictQuery', true);
+	console.log('Connected to MongoDB');
 	return mongoose;
 };
