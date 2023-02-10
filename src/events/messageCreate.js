@@ -41,8 +41,6 @@ module.exports = {
 
 			try {
 				const updatedMember = await memberSchema.findOneAndUpdate({ id: member_id }, { $inc: { xp: xpToAdd } }, { upsert: true, new: true });
-				console.log('XP given');
-
 				const lastLevel = getLevel(updatedMember.xp - xpToAdd);
 				const newLevel = getLevel(updatedMember.xp);
 
