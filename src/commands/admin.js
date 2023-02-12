@@ -39,7 +39,7 @@ module.exports = {
 				.setName('shutdown')
 				.setDescription('Good night')),
 	async execute(interaction) {
-		if (!interaction.member.roles.cache.some(role => {String(role.id) == '709434503294091294';})) {
+		if (interaction.member.roles.cache.some(role => {String(role.id) == '709434503294091294';})) {
 			interaction.reply('No, shut up');
 			return;
 		}
