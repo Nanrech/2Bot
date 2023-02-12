@@ -1,4 +1,3 @@
-const mongoose = require('../mongo');
 const memberSchema = require('../schemas/member');
 const { CHANNELS, ROLES } = require('../enums');
 
@@ -49,12 +48,11 @@ module.exports = {
 				if (lastLevel < newLevel) msg.react('🎉');
 
 				if (assignLevelRole(newLevel)) {
-					msg.guild.members.cache.get(member_id).roles.add(findNewLevelRole(newLevel));
+					msg.member.roles.add(findNewLevelRole(newLevel));
 				}
 			}
 			catch (error) {
 				console.error(error);
-				mongoose();
 			}
 		}
 		else {
