@@ -26,7 +26,7 @@ module.exports = {
 			}
 		}
 
-		if (msg.guildId != '707341019275853847') return;
+		// if (msg.guildId != '707341019275853847') return;
 
 		const member_id = msg.author.id;
 
@@ -48,7 +48,13 @@ module.exports = {
 				if (lastLevel < newLevel) msg.react('🎉');
 
 				if (assignLevelRole(newLevel)) {
-					msg.member.roles.add(findNewLevelRole(newLevel));
+					if (msg.member.roles) {
+						msg.member.roles.add(findNewLevelRole(newLevel));
+					}
+					else {
+						const member = msg.guild.members.fetch(member_id);
+						member.roles.add(findNewLevelRole(newLevel));
+					}
 				}
 			}
 			catch (error) {
