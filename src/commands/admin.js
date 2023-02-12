@@ -1,5 +1,5 @@
 const { SlashCommandBuilder } = require('discord.js');
-const { memberSchema } = require('../schemas/member');
+const memberSchema = require('../schemas/member');
 
 
 module.exports = {
@@ -39,12 +39,12 @@ module.exports = {
 				.setName('shutdown')
 				.setDescription('Good night')),
 	async execute(interaction) {
-		if (interaction.member.roles.cache.some(role => {String(role.id) == '709434503294091294';})) {
+		if (!interaction.member.roles.cache.some(role => {String(role.id) == '709434503294091294';})) {
 			interaction.reply('No, shut up');
 			return;
 		}
 
-		else if (interaction.options.getSubcommand() == 'shutdown') {
+		if (interaction.options.getSubcommand() == 'shutdown') {
 			interaction.reply('Shutting down');
 			console.log('[IMPORTANT] Shutting down bot');
 			await new Promise(resolve => setTimeout(resolve, 1000));
@@ -59,7 +59,6 @@ module.exports = {
 
 			await memberSchema.findOneAndUpdate({ id: victim.id }, { $inc: { xp: quantity * negCheck } }, { upsert: true, new: true });
 			interaction.reply(`${quantity * negCheck} XP for ${victim.id}`);
-			return;
 		}
 	},
 };
