@@ -1,8 +1,8 @@
-const mongoose = require('mongoose');
+const { Schema, model } = require('mongoose');
 
-const memberSchema = new mongoose.Schema({
+const memberSchema = new Schema({
 	id: { type: String },
 	xp: { type: Number, default: 0 },
 });
 
-module.exports = mongoose.model('Members', memberSchema);
+module.exports = model('Members', memberSchema);
