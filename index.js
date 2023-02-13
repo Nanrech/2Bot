@@ -1,8 +1,6 @@
 const fs = require('node:fs');
 const path = require('node:path');
 
-const mongoose = require('./src/mongo');
-const { MongoNetworkTimeoutError } = require('mongoose');
 const { Client, GatewayIntentBits, Collection, Partials } = require('discord.js');
 const { token } = require('./src/config.json');
 
@@ -40,16 +38,7 @@ client.on('interactionCreate', async interaction => {
 
 	if (!command) return;
 
-	try {
-		await command.execute(interaction, client);
-	}
-	catch (error) {
-		console.error(error);
-		if (error == MongoNetworkTimeoutError) {
-			await mongoose();
-		}
-		interaction.channel.send((`Command crashed lmao \`${interaction.commandName}\``));
-	}
+	await command.execute(interaction, client);
 });
 
 client.login(token);
