@@ -31,7 +31,7 @@ module.exports = {
 			const rankEmbed = new EmbedBuilder()
 				.setColor(0xED4245)
 				.setTitle(`${member.username}'s profile`)
-				.setDescription(`Current level: ${getLevel(memberDocument.xp)}\nCurrent XP: ${memberDocument.xp} xp\nXP to next level: ${getReqXP(getLevel(memberDocument.xp) + 1) - memberDocument.xp} xp`);
+				.setDescription(`Current level: ${getLevel(memberDocument.xp)}\nCurrent XP: ${memberDocument.xp.toLocaleString('en-us')} xp\nXP to next level: ${(getReqXP(getLevel(memberDocument.xp) + 1) - memberDocument.xp).toLocaleString('en-us')} xp`);
 			interaction.reply({ embeds: [rankEmbed] });
 		}
 
