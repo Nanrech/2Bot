@@ -1,10 +1,11 @@
-// Iimports;
 const fs = require('node:fs');
 const path = require('node:path');
 
-// "Specific" imports;
+const mongoose = require('./src/mongo');
+const { MongoNetworkTimeoutError } = require('mongoose');
 const { Client, GatewayIntentBits, Collection, Partials } = require('discord.js');
 const { token } = require('./src/config.json');
+
 
 // Discord.js constant declaration boilerplate;
 const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers, GatewayIntentBits.GuildMessages, GatewayIntentBits.GuildMessageReactions], partials: [Partials.Channel, Partials.Message, Partials.Reaction] });
@@ -44,6 +45,9 @@ client.on('interactionCreate', async interaction => {
 	}
 	catch (error) {
 		console.error(error);
+		if (error == MongoNetworkTimeoutError) {
+			await mongoose();
+		}
 		interaction.channel.send((`Command crashed lmao \`${interaction.commandName}\``));
 	}
 });
