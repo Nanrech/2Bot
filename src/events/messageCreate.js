@@ -48,13 +48,7 @@ module.exports = {
 				if (lastLevel < newLevel) msg.react('🎉');
 
 				if (assignLevelRole(newLevel)) {
-					if (msg.member.roles) {
-						msg.member.roles.add(findNewLevelRole(newLevel));
-					}
-					else {
-						const member = msg.guild.members.fetch(member_id);
-						member.roles.add(findNewLevelRole(newLevel));
-					}
+					msg.member.roles.add(findNewLevelRole(newLevel));
 				}
 			}
 			catch (error) {
@@ -75,7 +69,7 @@ module.exports = {
 
 function getLevel(xp) {
 	if (xp < 300) return 0;
-	return Math.floor((-1 + Math.sqrt((xp / 37.5) + 1)) / 2) + 1;
+	return Math.floor(Math.sqrt(xp / 37.5) / 2);
 }
 
 function assignLevelRole(level) {
