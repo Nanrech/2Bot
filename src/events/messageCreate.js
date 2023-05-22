@@ -26,7 +26,7 @@ module.exports = {
 			}
 		}
 
-		// if (msg.guildId != '707341019275853847') return;
+		if (msg.guildId != '707341019275853847' || msg.author.bot) return;
 
 		const member_id = msg.author.id;
 
