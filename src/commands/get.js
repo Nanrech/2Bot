@@ -41,7 +41,7 @@ module.exports = {
 				.find()
 				.sort({ xp: -1 })
 				.limit(15);
-			if (!topMembers) return interaction.reply('Something went wrong fetching that document from the database. Wait a moment before using again');
+			if (!topMembers) return interaction.reply('Couldn\'t get rank. Do you have any XP?');
 
 			let usernames = '';
 			let levels = '';
