@@ -1,5 +1,5 @@
 const { SlashCommandBuilder } = require('discord.js');
-const memberSchema = require('../schemas/member');
+const memberModel = require('../schemas/member');
 
 
 module.exports = {
@@ -57,7 +57,7 @@ module.exports = {
 			const quantity = interaction.options.getInteger('quantity');
 			const negCheck = interaction.options.getSubcommand() == 'xp-remove' ? -1 : 1;
 
-			await memberSchema.findOneAndUpdate({ id: victim.id }, { $inc: { xp: quantity * negCheck } }, { upsert: true, new: true });
+			await memberModel.findOneAndUpdate({ id: victim.id }, { $inc: { xp: quantity * negCheck } }, { upsert: true, new: true });
 			interaction.reply(`${quantity * negCheck} XP for ${victim.id}`);
 		}
 	},

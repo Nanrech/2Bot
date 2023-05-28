@@ -1,4 +1,4 @@
-const memberSchema = require('../schemas/member');
+const memberModel = require('../schemas/member');
 const { CHANNELS, ROLES } = require('../enums');
 
 // { member_id: message_timestamp }
@@ -41,7 +41,7 @@ module.exports = {
 			const xpToAdd = Math.round((baseXP + Math.random() * baseXP) + baseXP * 1 - baseXP);
 
 			try {
-				const updatedMember = await memberSchema.findOneAndUpdate({ id: member_id }, { $inc: { xp: xpToAdd } }, { upsert: true, new: true });
+				const updatedMember = await memberModel.findOneAndUpdate({ id: member_id }, { $inc: { xp: xpToAdd } }, { upsert: true, new: true });
 				const lastLevel = getLevel(updatedMember.xp - xpToAdd);
 				const newLevel = getLevel(updatedMember.xp);
 

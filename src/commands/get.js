@@ -1,6 +1,6 @@
 const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 
-const memberSchema = require('../schemas/member');
+const memberModel = require('../schemas/member');
 
 
 module.exports = {
@@ -23,7 +23,7 @@ module.exports = {
 	async execute(interaction) {
 		if (interaction.options.getSubcommand() == 'rank') {
 			const member = interaction.options.getUser('target') == null ? interaction.user : interaction.options.getUser('target');
-			const memberDocument = await memberSchema.findOne({ id: member.id }).exec();
+			const memberDocument = await memberModel.findOne({ id: member.id }).exec();
 
 			if (!memberDocument) return interaction.reply('Something went wrong fetching that document from the database. Wait a moment before using again');
 			// If it's null we're fucked I guess
@@ -37,7 +37,7 @@ module.exports = {
 
 		else {
 			// Leaderboard shenanigans
-			const topMembers = await memberSchema
+			const topMembers = await memberModel
 				.find()
 				.sort({ xp: -1 })
 				.limit(15);
