@@ -26,9 +26,26 @@ const ROLES = {
 
 };
 
+const XP_ROLES = {
+	level0: 0,
+	level1: 300,
+	level5: 3750,
+	level10: 15000,
+	level15: 33750,
+	level20: 60000,
+	level30: 135000,
+	level40: 240000,
+	level50: 375000,
+	level60: 540000,
+	level70: 735000,
+	level80: 960000,
+	level90: 1215000,
+	level100: 1500000,
+};
+
 const CHANNELS = {
 	verify: '883353164563230731',
 	reaction_roles: '815346222549827645',
 };
 
-module.exports = { ROLES, CHANNELS };
+module.exports = { ROLES, CHANNELS, XP_ROLES };
