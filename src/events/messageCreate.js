@@ -60,7 +60,7 @@ module.exports = {
 			timeMap.set(member_id, msg.createdTimestamp);
 		}
 
-		if (msg_counter > 299) {
+		if (msg_counter > 700) {
 			timeMap.clear();
 			msg_counter = 0;
 		}
