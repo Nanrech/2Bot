@@ -15,10 +15,12 @@ module.exports = {
 			'</ping:1007290802629775426>',
 			'</say:1012680708008984648>',
 			'</stab:1011610351328038972>',
+			'</rank:1112883060808093807>',
+			'</leaderboard:1112883060808093806>',
 		];
 		const helpEmbed = new EmbedBuilder()
 			.setTitle('Help')
-			.setDescription(`\`bonk\` ${arrCmdMentions[0]}\n\`furry\` ${arrCmdMentions[1]}\n\`help\` ${arrCmdMentions[2]}\n\`hug\` ${arrCmdMentions[3]}\n\`kiss\` ${arrCmdMentions[4]}\n\`pat\` ${arrCmdMentions[5]}\n\`ping\` ${arrCmdMentions[6]}\n\`say\` ${arrCmdMentions[7]}\n\`stab\` ${arrCmdMentions[8]}`)
+			.setDescription(`\`bonk\` ${arrCmdMentions[0]}\n\`furry\` ${arrCmdMentions[1]}\n\`help\` ${arrCmdMentions[2]}\n\`hug\` ${arrCmdMentions[3]}\n\`kiss\` ${arrCmdMentions[4]}\n\`pat\` ${arrCmdMentions[5]}\n\`ping\` ${arrCmdMentions[6]}\n\`say\` ${arrCmdMentions[7]}\n\`stab\` ${arrCmdMentions[8]}\n\`rank\` ${arrCmdMentions[9]}\n\`leaderboard\` ${arrCmdMentions[10]}`)
 			.setColor(0xED4245);
 		await interaction.reply({ embeds: [helpEmbed], ephemeral: true });
 	},
