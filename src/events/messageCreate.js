@@ -38,7 +38,7 @@ module.exports = {
 
 			if (diff < 3000) return;
 
-			const xpToAdd = Math.round((baseXP + Math.random() * baseXP) + baseXP * 1 - baseXP);
+			const xpToAdd = Math.round((baseXP + Math.random() * baseXP));
 
 			try {
 				const updatedMember = await memberModel.findOneAndUpdate({ id: member_id }, { $inc: { xp: xpToAdd } }, { upsert: true, new: true });
