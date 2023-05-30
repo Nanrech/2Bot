@@ -48,5 +48,5 @@ module.exports = {
 function getLevel(xp) {
 	const XP = Number(xp);
 	if (XP < 300) {return 0;}
-	return Math.floor((-1 + Math.sqrt((XP / 37.5) + 1)) / 2) + 1;
+	return Math.floor((-1 + Math.sqrt((XP / 37.5) + 1)) / 2);
 }
