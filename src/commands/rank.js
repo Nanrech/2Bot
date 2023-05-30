@@ -15,6 +15,7 @@ module.exports = {
 	async execute(interaction) {
 		const member = interaction.options.getUser('target') == null ? interaction.user : interaction.options.getUser('target');
 		const memberDocument = await memberModel.findOne({ id: member.id }).exec();
+		const memberLevel = getLevel(memberDocument.xp);
 
 		if (!memberDocument) return interaction.reply('Something went wrong fetching that document from the database. Wait a moment before using again');
 		// If it's null we're fucked I guess
@@ -26,7 +27,7 @@ module.exports = {
 			.addFields([
 				{
 					'name': 'Level',
-					'value': `\`${getLevel(memberDocument.xp)}\``,
+					'value': `\`${memberLevel}\``,
 					'inline': true,
 				},
 				{
@@ -35,8 +36,8 @@ module.exports = {
 					'inline': true,
 				},
 				{
-					'name': 'Next Level',
-					'value': `\`${(getReqXP(getLevel(memberDocument.xp) + 1) - memberDocument.xp).toLocaleString('en-us')}\``,
+					'name': `XP until ${memberLevel + 1}`,
+					'value': `\`${(getReqXP(memberLevel + 1) - memberDocument.xp).toLocaleString('en-us')}\``,
 					'inline': true,
 				},
 			])
