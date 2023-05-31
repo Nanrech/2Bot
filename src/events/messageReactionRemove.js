@@ -1,4 +1,4 @@
-const { ROLES, CHANNELS } = require('../enums');
+const { ROLES, CHANNELS } = require('../common');
 
 
 module.exports = {

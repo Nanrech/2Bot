@@ -1,6 +1,7 @@
 const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 
 const memberModel = require('../schemas/member');
+const { getLevel, getReqXP } = require('../common');
 
 
 module.exports = {
@@ -47,12 +48,3 @@ module.exports = {
 		interaction.reply({ embeds: [rankEmbed] });
 	},
 };
-
-function getReqXP(l) {
-	return (150 * (Math.pow(l, 2) + l));
-}
-
-function getLevel(xp) {
-	if (xp < 300) return 0;
-	return Math.floor(Math.sqrt(xp / 37.5) / 2);
-}

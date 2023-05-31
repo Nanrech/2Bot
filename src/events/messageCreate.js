@@ -1,5 +1,5 @@
 const memberModel = require('../schemas/member');
-const { CHANNELS, ROLES } = require('../enums');
+const { CHANNELS, getLevel, assignLevelRole, findNewLevelRole } = require('../common');
 
 // { member_id: message_timestamp }
 const timeMap = new Map();
@@ -66,45 +66,3 @@ module.exports = {
 		}
 	},
 };
-
-function getLevel(xp) {
-	if (xp < 300) return 0;
-	return Math.floor(Math.sqrt(xp / 37.5) / 2);
-}
-
-function assignLevelRole(level) {
-	return [1, 5, 10, 15, 20, 30, 40, 50, 60, 70, 80, 90, 100].includes(level);
-}
-
-function findNewLevelRole(level) {
-	switch (level) {
-	case 1:
-		return ROLES.level1;
-	case 5:
-		return ROLES.level5;
-	case 10:
-		return ROLES.level10;
-	case 15:
-		return ROLES.level15;
-	case 20:
-		return ROLES.level20;
-	case 30:
-		return ROLES.level30;
-	case 40:
-		return ROLES.level40;
-	case 50:
-		return ROLES.level50;
-	case 60:
-		return ROLES.level60;
-	case 70:
-		return ROLES.level70;
-	case 80:
-		return ROLES.level80;
-	case 90:
-		return ROLES.level90;
-	case 100:
-		return ROLES.level100;
-	default:
-		return ROLES.level1;
-	}
-}
