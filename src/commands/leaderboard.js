@@ -35,6 +35,7 @@ module.exports = {
 
 		const leaderboardEmbed = new EmbedBuilder()
 			.setColor(0xED4245)
+			.setTimestamp(Date.now())
 			.addFields(
 				{ name: 'Top 15 members', value: usernames, inline: true },
 				{ name: 'Level', value: levels, inline: true },

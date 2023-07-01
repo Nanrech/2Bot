@@ -42,6 +42,7 @@ module.exports = {
 		const pingEmbed = new EmbedBuilder()
 			.setTitle('📶 Ping')
 			.setColor(0xED4245)
+			.setTimestamp(Date.now())
 			.addFields(
 				{ name: '**Latency:**', value: `${sent.createdTimestamp - interaction.createdTimestamp} ms` },
 				{ name: '**API:**', value: `${Math.round(client.ws.ping)}ms` },

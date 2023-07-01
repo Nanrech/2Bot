@@ -9,7 +9,9 @@ module.exports = {
 				.setDescription('The victim')
 				.setRequired(true)),
 	async execute(interaction) {
+		let patTarget = `Pat by ${interaction.user.username}`;
 		let emoji = '<:bunnyheart:957491852272099348>';
+
 		switch (interaction.options.getUser('user').id) {
 		case '291620843363106828':
 			emoji = '<:furryheart:709831332699832411>';
@@ -51,14 +53,16 @@ module.exports = {
 			emoji = '<:heart_bashar:756573559522066432>';
 			break;
 		}
-		let patTarget = `Pat by ${interaction.user.username}`;
+
 		if (interaction.user.id == interaction.options.getUser('user').id) {
 			patTarget = 'lol they pat themselves';
 		}
+
 		const patEmbed = new EmbedBuilder()
 			.setDescription(`${emoji} <@${interaction.options.getUser('user').id}>`)
 			.setFooter({ text: patTarget })
 			.setColor(0xED4245);
+
 		await interaction.channel.send({ embeds: [patEmbed] });
 		await interaction.reply({ content: 'Pat sent :heart:', ephemeral: true });
 	},

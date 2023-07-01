@@ -13,6 +13,7 @@ module.exports = {
 			.setDescription(`<:stab:732327194763984916> <@${interaction.options.getUser('user').id}>`)
 			.setFooter({ text: `Stabbed by ${interaction.user.username}` })
 			.setColor(0xED4245);
+
 		await interaction.channel.send({ embeds: [stabEmbed] });
 		await interaction.reply({ content: 'Stab sent :knife:', ephemeral: true });
 	},

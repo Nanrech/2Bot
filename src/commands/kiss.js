@@ -11,6 +11,7 @@ module.exports = {
 	async execute(interaction) {
 		// TODO: addXP(interaction.user.id, 50);
 		let emoji = '<:wholesomekiss:733723707473788958>';
+
 		switch (interaction.options.getUser('user').id) {
 		case '291620843363106828':
 			emoji = '<:furryheart:709831332699832411>';
@@ -64,16 +65,20 @@ module.exports = {
 			emoji = '<:heart_h:751480634190331956>';
 			break;
 		}
+
 		let kissTarget = `Kissed by ${interaction.user.username}`;
 		let kissDescription = `${emoji} <@${interaction.options.getUser('user').id}>`;
+
 		if (interaction.options.getUser('user').id === interaction.user.id) {
-			kissTarget = 'Maybe you can, idk';
 			kissDescription = 'Can you kiss yourself? <:sylvthink:875707232560500767>';
+			kissTarget = 'Maybe you can, idk';
 		}
+
 		const kissEmbed = new EmbedBuilder()
 			.setDescription(kissDescription)
 			.setFooter({ text: kissTarget })
 			.setColor(0xED4245);
+
 		await interaction.reply({ content: 'Kiss sent :heart:', ephemeral: true });
 		await interaction.channel.send({ embeds: [kissEmbed] });
 	},

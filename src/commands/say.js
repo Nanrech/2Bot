@@ -19,6 +19,6 @@ module.exports = {
 
 		await channel.send(interaction.options.getString('text'));
 		await interaction.reply({ content: `Message sent at ${channel}`, ephemeral: true });
-		console.log(`[ADMIN-LOG] /say used by ${interaction.user.username} in ${channel}. Message: ${interaction.options.getString('text')}`);
+		console.log(`say command used by ${interaction.user.username} in ${channel}. Message: ${interaction.options.getString('text')}`);
 	},
 };

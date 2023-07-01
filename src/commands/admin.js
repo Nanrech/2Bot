@@ -46,10 +46,10 @@ module.exports = {
 
 		if (interaction.options.getSubcommand() == 'shutdown') {
 			interaction.reply('Shutting down');
-			console.log('[IMPORTANT] Shutting down bot');
+			console.log('Shutting down bot');
 			await new Promise(resolve => setTimeout(resolve, 1000));
 			// fancy "wait for a second" I stole from stackoverflow
-			process.exit(0);
+			process.exit(1);
 		}
 
 		else if (interaction.options.getSubcommand() == 'xp-add' || interaction.options.getSubcommand() == 'xp-remove') {
