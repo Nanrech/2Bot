@@ -18,7 +18,7 @@ module.exports = {
 		const memberDocument = await memberModel.findOne({ id: memberTarget.id }).exec();
 		const memberLevel = getLevel(memberDocument.xp);
 
-		if (!memberDocument) return interaction.reply('Something went wrong fetching that document from the database. Wait a moment before using again');
+		if (!memberDocument) return interaction.reply('User not found. Do you have any XP?');
 		// If it's null we're fucked I guess
 
 		const rankEmbed = new EmbedBuilder()

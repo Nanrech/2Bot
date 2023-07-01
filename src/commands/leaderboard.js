@@ -15,7 +15,8 @@ module.exports = {
 			.find()
 			.sort({ xp: -1 })
 			.limit(15);
-		if (!topMembers) return interaction.reply('Couldn\'t get rank. Do you have any XP?');
+
+		if (!topMembers) return interaction.reply('Error fetching leaderboard from database');
 
 		let usernames = '';
 		let levels = '';
