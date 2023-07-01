@@ -1,5 +1,5 @@
 const memberModel = require('../schemas/member');
-const { CHANNELS, getLevel, assignLevelRole, findNewLevelRole } = require('../common');
+const { CHANNELS, getLevel, assignLevelRole, findNewLevelRole, getRandomInt } = require('../common');
 
 // { member_id: message_timestamp }
 const timeMap = new Map();
@@ -45,7 +45,13 @@ module.exports = {
 				const lastLevel = getLevel(updatedMember.xp - xpToAdd);
 				const newLevel = getLevel(updatedMember.xp);
 
-				if (lastLevel < newLevel) msg.react('🎉');
+				if (lastLevel < newLevel) {
+					if (getRandomInt(1, 100) == 1) {
+						// Easter egg
+						msg.react('<a:slug:1124685288074125403>');
+					}
+					msg.react('🎉');
+				}
 
 				if (assignLevelRole(newLevel)) {
 					msg.member.roles.add(findNewLevelRole(newLevel));
