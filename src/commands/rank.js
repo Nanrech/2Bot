@@ -14,17 +14,19 @@ module.exports = {
 				.setDescription('Whose XP you want to get. Defaults to yourself.')
 				.setRequired(false)),
 	async execute(interaction) {
-		const member = interaction.options.getUser('target') == null ? interaction.user : interaction.options.getUser('target');
-		const memberDocument = await memberModel.findOne({ id: member.id }).exec();
+		const memberTarget = interaction.options.getUser('target') == null ? interaction.user : interaction.options.getUser('target');
+		const memberDocument = await memberModel.findOne({ id: memberTarget.id }).exec();
 		const memberLevel = getLevel(memberDocument.xp);
 
 		if (!memberDocument) return interaction.reply('Something went wrong fetching that document from the database. Wait a moment before using again');
 		// If it's null we're fucked I guess
 
-
 		const rankEmbed = new EmbedBuilder()
 			.setColor(0xED4245)
-			.setTitle(`@${member.username}`)
+			.setTitle(memberTarget.username)
+			.setThumbnail(memberTarget.displayAvatarURL())
+			.setTimestamp(Date.now())
+			.setFooter({ text: memberTarget.id })
 			.addFields([
 				{
 					'name': 'Level',
@@ -41,9 +43,7 @@ module.exports = {
 					'value': `\`${(getReqXP(memberLevel + 1) - memberDocument.xp).toLocaleString('en-us')}\``,
 					'inline': true,
 				},
-			])
-			.setThumbnail(member.displayAvatarURL())
-			.setFooter({ text: memberDocument._id.toString() });
+			]);
 
 		interaction.reply({ embeds: [rankEmbed] });
 	},
