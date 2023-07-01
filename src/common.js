@@ -49,8 +49,8 @@ const CHANNELS = {
 };
 
 function getLevel(xp) {
-	if (xp < 300) return 0;
-	return Math.floor(Math.sqrt(xp / 37.5) / 2);
+	// https://www.symbolab.com/solver/function-inverse-calculator
+	return Math.floor(((-150 + Math.sqrt(22500 + (600 * xp))) / 300));
 }
 
 function getReqXP(l) {
@@ -94,4 +94,8 @@ function findNewLevelRole(level) {
 	}
 }
 
-module.exports = { ROLES, CHANNELS, XP_ROLES, getLevel, getReqXP, assignLevelRole, findNewLevelRole };
+function getRandomInt(min, max) {
+	return Math.floor(Math.random() * (max - min + 1) + min);
+}
+
+module.exports = { ROLES, CHANNELS, XP_ROLES, getLevel, getReqXP, assignLevelRole, findNewLevelRole, getRandomInt };
