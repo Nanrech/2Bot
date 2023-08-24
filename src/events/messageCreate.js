@@ -50,7 +50,9 @@ module.exports = {
 						// Easter egg
 						msg.react('<a:slug:1124685288074125403>');
 					}
-					msg.react('🎉');
+					else {
+						msg.react('🎉');
+					}
 				}
 
 				if (assignLevelRole(newLevel)) {
