@@ -7,41 +7,51 @@ const { getLevel } = require('../common');
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('leaderboard')
-		.setDescription('Displays the top 15 biggest nerds'),
+		.setDescription('Displays the top 10 biggest nerds'),
 	async execute(interaction) {
-		// OLD: Leaderboard shenanigans
-		// NEW: Here lie my hopes and dreams of making a better looking leaderboard embed. I was bested by JS' unrelenting bullshit.
 		const topMembers = await memberModel
 			.find()
 			.sort({ xp: -1 })
-			.limit(15);
+			.limit(10);
 
 		if (!topMembers) return interaction.reply('Error fetching leaderboard from database');
 
-		let usernames = '';
-		let levels = '';
-		let xp = '';
+		const leaderboardFields = new Array;
+		const leaderboardEmbed = new EmbedBuilder()
+			.setTitle('Top 10 nerds')
+			.setColor(0xED4245)
+			.setTimestamp(Date.now());
 
-		for (let i = 0; i != 15; i++) {
-			// https://stackoverflow.com/questions/60607341/displaying-leaderboard-in-embed
-			usernames += `\`${(i + 1).toString().padStart(2, '0')}\` <@${topMembers[i].id}>\n`;
-			levels += `\`${getLevel(topMembers[i].xp)}\`\n`;
-			xp += `\`${topMembers[i].xp.toLocaleString('en-us')}\`\n`;
+		for (let i = 0; i != 10; i++) {
+			const username = await interaction.client.users.fetch(topMembers[i].id, true);
+			leaderboardFields.push(
+				{
+					name: `#${i + 1} ${username.displayName}`, value: `\`lvl ${getLevel(topMembers[i].xp)}\` (${topMembers[i].xp.toLocaleString('en-us')})`, inline: true,
+				},
+			);
 		}
 
-		usernames = usernames
-			.replace('`01`', '`🏆`')
-			.replace('`02`', '`🥈`')
-			.replace('`03`', '`🥉`');
+		let fieldCount = 0;
 
-		const leaderboardEmbed = new EmbedBuilder()
-			.setColor(0xED4245)
-			.setTimestamp(Date.now())
-			.addFields(
-				{ name: 'Top 15 members', value: usernames, inline: true },
-				{ name: 'Level', value: levels, inline: true },
-				{ name: 'XP', value: xp, inline: true },
-			);
+		for (let i = 0; i != 10; i++) {
+
+			if (fieldCount == 2) {
+				fieldCount = 0;
+				leaderboardEmbed.addFields(
+					{ name: '\u200b', value: '\u200b', inline: true },
+				);
+			}
+
+			leaderboardEmbed.addFields(leaderboardFields[i]);
+			fieldCount += 1;
+
+			if (i == 9) {
+				// Looks weird otherwise
+				leaderboardEmbed.addFields(
+					{ name: '\u200b', value: '\u200b', inline: true },
+				);
+			}
+		}
 
 		interaction.reply({ embeds: [leaderboardEmbed] });
 	},
