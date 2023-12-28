@@ -23,7 +23,7 @@ module.exports = {
 
 		const rankEmbed = new EmbedBuilder()
 			.setColor(0xED4245)
-			.setTitle(memberTarget.username)
+			.setTitle(`🛂 ${memberTarget.username}`)
 			.setThumbnail(memberTarget.displayAvatarURL())
 			.setTimestamp(Date.now())
 			.setFooter({ text: memberTarget.id })

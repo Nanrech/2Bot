@@ -7,7 +7,7 @@ const { getLevel } = require('../common');
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('leaderboard')
-		.setDescription('Displays the top 10 biggest nerds'),
+		.setDescription('👑 Displays the top 10 biggest nerds'),
 	async execute(interaction) {
 		const topMembers = await memberModel
 			.find()
