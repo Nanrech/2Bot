@@ -35,7 +35,7 @@ with open(f"./extras/auto_backup/backup_{datetime.utcnow().strftime('%d_%m_%Y')}
 
     f.write("]")
 
-# backup_collection.delete_many({})
-# backup_collection.insert_many(documents)
+backup_collection.delete_many({})
+backup_collection.insert_many(documents)
 
 client.close()
