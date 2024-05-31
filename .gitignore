@@ -4,3 +4,5 @@ package-lock.json
 .eslintrc.json
 .env
 config.json
+/extras/mass_xp
+/extras/hide
