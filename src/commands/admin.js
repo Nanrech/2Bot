@@ -59,7 +59,7 @@ module.exports = {
 			const negCheck = interaction.options.getSubcommand() == 'xp-remove' ? -1 : 1;
 
 			await memberModel.findOneAndUpdate({ id: victim.id }, { $inc: { xp: quantity * negCheck } }, { upsert: true, new: true });
-			interaction.reply(`${quantity * negCheck} XP for ${victim.id}`);
+			interaction.reply(`${quantity * negCheck} XP for <@${victim.id}>`);
 		}
 	},
 };
