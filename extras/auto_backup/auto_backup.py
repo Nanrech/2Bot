@@ -15,9 +15,8 @@ members_count = members_collection.count_documents({})
 documents = []
 i = 1
 
-# Terrible (took me like 10 minutes bc I don't want to do it by hand)
-# tool to automatically create backups and export them as json
-with open(f"./extras/auto_backup/backup_{datetime.datetime.now(datetime.UTC).strftime('%d_%m_%Y')}.json", "w") as f:
+# This is a sledgehammer that backups the "members" db and also exports it as json
+with open(f"./extras/auto_backup/backup_{datetime.datetime.now(datetime.UTC).strftime('%Y_%m_%d')}.json", "w") as f:
     f.write("[")
 
     for doc in cursor:
