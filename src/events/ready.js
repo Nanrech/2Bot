@@ -3,14 +3,17 @@ const mongooseConnect = require('../mongo');
 module.exports = {
 	name: 'ready',
 	once: true,
-	execute(_) {
-		console.log('Connected to Discord');
+	execute(client) {
+		console.log(`Connected to Discord as ${client.user.username}#${client.user.discriminator} (${client.user.id})`);
 
-		mongooseConnect().then((readyState) => {
+		mongooseConnect().then((mgClient) => {
+			const readyState = mgClient.connection.readyState;
+
 			if (readyState === 1) {
 				console.log('Connected to MongoDB');
 			} else {
-				console.log('Couldn\'t connect to MongoDB. Connection state:', readyState);
+				console.log('Couldn\'t connect to MongoDB');
+				console.log(`Connection state: ${readyState} (${mgClient.STATES[readyState]})`);
 			}
 		})
 	},

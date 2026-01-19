@@ -4,5 +4,5 @@ const { mongoURL } = require('./config.json');
 module.exports = async () => {
 	mongoose.set('strictQuery', true);
 	await mongoose.connect(mongoURL, { keepAlive: true });
-	return mongoose.connection.readyState;
+	return mongoose;
 };
